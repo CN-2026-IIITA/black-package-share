@@ -1,0 +1,31 @@
+{
+  "name": "black-packet",
+  "version": "1.0.0",
+  "description": "Advanced chunk-based file transfer system with resume, auto-expiry, secure access tokens, and LAN discovery",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node backend/server.js",
+    "test": "node test/testCases.js"
+  },
+  "keywords": [
+    "file-transfer",
+    "chunked-upload",
+    "resume",
+    "socket.io",
+    "LAN",
+    "secure-sharing"
+  ],
+  "author": "Black Packet Team",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "qrcode": "^1.5.4",
+    "socket.io": "^4.7.5",
+    "uuid": "^9.0.1"
+  }
+}
