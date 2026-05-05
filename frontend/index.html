@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Black Packet — Advanced chunk-based file transfer with resume, auto-expiry, and secure access codes. Transfer files securely on LAN or over the internet.">
+    <title>Black Packet — Secure File Transfer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- ═══ Animated Background Particles ═══ -->
+    <div class="bg-particles" id="bgParticles"></div>
+    <div class="scanline-overlay"></div>
+
+    <!-- ═══ Navigation ═══ -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-brand">
+            <div class="logo-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+            </div>
+            <span class="brand-text">Black<span class="brand-accent">Packet</span></span>
+        </div>
+        <div class="nav-status">
+            <span class="status-dot" id="statusDot"></span>
+            <span class="status-text" id="statusText">Connecting…</span>
+        </div>
+    </nav>
+
+    <!-- ═══ Main Container ═══ -->
+    <main class="main-container">
+        <!-- ── Hero Section ── -->
+        <section class="hero" id="hero">
+            <h1 class="hero-title">
+                Transfer Files <span class="gradient-text">Securely</span>
+            </h1>
+            <p class="hero-subtitle">
+                Chunk-based • Resumable • Auto-Expiring • LAN Ready
+            </p>
+        </section>
+
+        <!-- ── Tab Navigation ── -->
+        <div class="tab-bar" id="tabBar">
+            <button class="tab active" data-tab="upload" id="tabUpload">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+                <span>Upload</span>
+            </button>
+            <button class="tab" data-tab="download" id="tabDownload">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+                <span>Download</span>
+            </button>
+            <button class="tab" data-tab="history" id="tabHistory">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                <span>History</span>
+            </button>
+            <button class="tab" data-tab="lan" id="tabLAN">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+                <span>LAN</span>
+            </button>
+            <button class="tab" data-tab="analytics" id="tabAnalytics">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+                <span>Analytics</span>
+            </button>
+        </div>
+
+        <!-- ═══ UPLOAD PANEL ═══ -->
+        <section class="panel active" id="panelUpload">
+            <div class="card glass">
+                <!-- Upload Mode Cards (delivery method) -->
+                <div class="upload-mode-grid">
+                    <div class="upload-mode-card active" data-mode="code">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        <span>Access Code</span>
+                    </div>
+                    <div class="upload-mode-card" data-mode="qr">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><line x1="21" y1="14" x2="21" y2="21"/><line x1="14" y1="21" x2="21" y2="21"/></svg>
+                        <span>QR Code</span>
+                    </div>
+                    <div class="upload-mode-card" data-mode="stego">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                        <span>Share Card</span>
+                    </div>
+                </div>
+
+                <!-- Content Safety Indicator -->
+                <div class="content-scan-bar" id="contentScanBar">
+                    <div class="scan-indicator">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        <span class="scan-status" id="scanStatus">Content Filter: Active</span>
+                    </div>
+                    <div class="encryption-indicator">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        <span>AES-256-GCM</span>
+                    </div>
+                </div>
+                <!-- Drop Zone -->
+                <div class="drop-zone" id="dropZone">
+                    <div class="drop-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                    </div>
+                    <p class="drop-text">Drag & drop files here</p>
+                    <p class="drop-subtext">or click to browse — up to 500 MB</p>
+                    <input type="file" id="fileInput" hidden>
+                </div>
+
+                <!-- File Info (hidden until file selected) -->
+                <div class="file-info hidden" id="fileInfo">
+                    <div class="file-icon-wrap">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    </div>
+                    <div class="file-details">
+                        <span class="file-name" id="fileName">—</span>
+                        <span class="file-size" id="fileSize">—</span>
+                    </div>
+                    <button class="btn-icon" id="removeFile" title="Remove file">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
+
+                <!-- Expiry Setting -->
+                <div class="setting-row hidden" id="expiryRow">
+                    <label for="expirySelect">Link expires in:</label>
+                    <select id="expirySelect" class="select-input">
+                        <option value="10">10 minutes</option>
+                        <option value="30" selected>30 minutes</option>
+                        <option value="60">1 hour</option>
+                        <option value="120">2 hours</option>
+                        <option value="1440">24 hours</option>
+                    </select>
+                </div>
+
+                <!-- Upload Button -->
+                <button class="btn-primary hidden" id="uploadBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+                    <span>Start Upload</span>
+                </button>
+
+                <!-- Progress Section (hidden until upload starts) -->
+                <div class="progress-section hidden" id="progressSection">
+                    <div class="progress-header">
+                        <span class="progress-label" id="progressLabel">Uploading…</span>
+                        <span class="progress-percent" id="progressPercent">0%</span>
+                    </div>
+                    <div class="progress-bar-track">
+                        <div class="progress-bar-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-stats">
+                        <span id="chunkInfo">Chunk 0 / 0</span>
+                        <span id="speedInfo">— / s</span>
+                        <span id="etaInfo">ETA: —</span>
+                    </div>
+                </div>
+
+                <!-- Access Code Result (hidden until upload completes) -->
+                <div class="result-section hidden" id="resultSection">
+                    <div class="result-badge">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                        <span>Upload Complete!</span>
+                    </div>
+                    <div class="access-code-wrap">
+                        <label>Access Code</label>
+                        <div class="access-code" id="accessCode">------</div>
+                        <button class="btn-secondary" id="copyCodeBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            Copy
+                        </button>
+                    </div>
+                    <p class="result-expiry" id="resultExpiry">Expires in 30 minutes</p>
+
+                    <!-- QR Code Section -->
+                    <div class="qr-section hidden" id="qrSection">
+                        <div class="qr-code-wrap">
+                            <div class="qr-phone-hint">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-1)" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+                                Open on any phone on the same Wi-Fi
+                            </div>
+                            <img id="qrImage" class="qr-image" src="" alt="QR Code">
+                            <p class="qr-label" id="qrLabel">Scan to Download</p>
+                            <div class="qr-url-row">
+                                <a class="qr-download-url" id="downloadUrlText" href="#" target="_blank" rel="noopener noreferrer"></a>
+                                <button class="btn-icon" id="copyQrUrlBtn" title="Copy URL">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Steganographic Share Card -->
+                    <div class="stego-section hidden" id="stegoSection">
+                        <div class="stego-card-wrap">
+                            <p class="stego-title">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                                Secret Share Card
+                            </p>
+                            <img id="stegoImage" class="stego-image" src="" alt="Share Card">
+                            <p class="stego-hint">Access code hidden inside this image</p>
+                            <button class="btn-secondary" id="downloadStegoBtn">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                Save Card
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Crypto Shred Button -->
+                    <div class="shred-section hidden" id="shredSection">
+                        <button class="btn-shred" id="shredBtn">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                            Shred Keys (Destroy Access)
+                        </button>
+                        <p class="shred-hint">Permanently destroys encryption keys — file becomes unrecoverable</p>
+                    </div>
+
+                    <div class="encrypted-badge hidden" id="encryptedBadge">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        AES-256-GCM Encrypted
+                    </div>
+
+                    <button class="btn-outline" id="newUploadBtn">Upload Another File</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel" id="panelDownload">
+            <div class="card glass">
+                <h2 class="card-title">Download a File</h2>
+                <p class="card-subtitle">Choose how you want to access your file</p>
+
+                <!-- Access Method Cards -->
+                <div class="access-method-grid" id="accessMethodGrid">
+                    <!-- Card 1: Access Code -->
+                    <div class="access-method-card" id="methodCode" data-method="code">
+                        <div class="method-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                            </svg>
+                        </div>
+                        <h3 class="method-title">Access Code</h3>
+                        <p class="method-desc">Enter the 6-digit code shared by the sender</p>
+                    </div>
+
+                    <!-- Card 2: QR Code -->
+                    <div class="access-method-card" id="methodQR" data-method="qr">
+                        <div class="method-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="3" width="7" height="7"/>
+                                <rect x="14" y="3" width="7" height="7"/>
+                                <rect x="3" y="14" width="7" height="7"/>
+                                <rect x="14" y="14" width="3" height="3"/>
+                                <line x1="21" y1="14" x2="21" y2="21"/>
+                                <line x1="14" y1="21" x2="21" y2="21"/>
+                            </svg>
+                        </div>
+                        <h3 class="method-title">QR Code</h3>
+                        <p class="method-desc">Scan the QR code generated at upload time</p>
+                    </div>
+
+                    <!-- Card 3: Hidden Image (Steganography) -->
+                    <div class="access-method-card" id="methodStego" data-method="stego">
+                        <div class="method-icon">
+                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                <polyline points="21 15 16 10 5 21"/>
+                            </svg>
+                        </div>
+                        <h3 class="method-title">Hidden Image</h3>
+                        <p class="method-desc">Drop the secret share card to extract hidden code</p>
+                    </div>
+                </div>
+
+                <!-- Method: Access Code Input -->
+                <div class="method-panel active" id="methodPanelCode">
+                    <div class="code-input-wrap" id="codeInputWrap">
+                        <input type="text" class="code-input" id="codeInput" maxlength="6" placeholder="000000" autocomplete="off">
+                    </div>
+                </div>
+
+                <!-- Method: QR Code Scanner Info -->
+                <div class="method-panel" id="methodPanelQR">
+                    <div class="qr-scan-info">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)" stroke-width="1.5" opacity="0.6">
+                            <rect x="3" y="3" width="7" height="7"/>
+                            <rect x="14" y="3" width="7" height="7"/>
+                            <rect x="3" y="14" width="7" height="7"/>
+                            <rect x="14" y="14" width="3" height="3"/>
+                            <line x1="21" y1="14" x2="21" y2="21"/>
+                            <line x1="14" y1="21" x2="21" y2="21"/>
+                        </svg>
+                        <p class="qr-scan-text">Scan the QR code shown on the sender's screen using your phone camera. It will open the download link directly.</p>
+                        <p class="qr-scan-hint">Or paste the download URL from the QR code below:</p>
+                        <input type="text" class="qr-url-input" id="qrUrlInput" placeholder="Paste download URL here…" autocomplete="off">
+                    </div>
+                </div>
+
+                <!-- Method: Steganography Drop Zone -->
+                <div class="method-panel" id="methodPanelStego">
+                    <div class="stego-drop-zone" id="stegoDropZone">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                        <p class="stego-drop-text">Drop the secret share card image here</p>
+                        <p class="stego-drop-hint">The 6-digit access code is hidden inside the image using steganography</p>
+                        <input type="file" id="stegoFileInput" hidden accept="image/png">
+                    </div>
+                </div>
+
+                <button class="btn-primary" id="downloadBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+                    <span>Download</span>
+                </button>
+
+                <div class="download-status hidden" id="downloadStatus">
+                    <div class="download-progress">
+                        <span id="dlStatusText">Downloading…</span>
+                        <div class="progress-bar-track">
+                            <div class="progress-bar-fill" id="dlProgressFill"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="error-msg hidden" id="downloadError"></div>
+            </div>
+        </section>
+
+        <!-- ═══ HISTORY PANEL ═══ -->
+        <section class="panel" id="panelHistory">
+            <div class="card glass">
+                <h2 class="card-title">Transfer History</h2>
+                <p class="card-subtitle">Your recent uploads during this session</p>
+                <div class="history-list" id="historyList">
+                    <div class="empty-state">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <p>No transfers yet</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══ LAN PANEL ═══ -->
+        <section class="panel" id="panelLan">
+            <div class="card glass">
+                <h2 class="card-title">LAN Devices</h2>
+                <p class="card-subtitle">Devices discovered on your local network</p>
+
+                <!-- Local Device Info -->
+                <div class="local-device-info" id="localDeviceInfo">
+                    <div class="local-device-header">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        <span>This Device</span>
+                    </div>
+                    <div class="local-device-details">
+                        <span id="localHostname">—</span>
+                        <span id="localIPs" class="local-ips" style="font-size:0.72rem;color:var(--accent-1);font-family:monospace">—</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons (equal width) -->
+                <div class="lan-btn-group">
+                    <button class="btn-primary" id="scanNetworkBtn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>
+                        <span>Scan Network</span>
+                    </button>
+                    <button class="btn-secondary" id="refreshLAN">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                        <span>Refresh Peers</span>
+                    </button>
+                </div>
+
+                <!-- Black Packet Peers (UDP Discovery) -->
+                <h3 class="lan-section-title">
+                    <span class="pulse-dot"></span>
+                    Black Packet Peers
+                </h3>
+                <div class="peer-list" id="peerList">
+                    <div class="empty-state">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>
+                        <p>No Black Packet peers yet</p>
+                    </div>
+                </div>
+
+                <!-- Network Devices (ARP Scan) -->
+                <h3 class="lan-section-title" style="margin-top:18px">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>
+                    Nearby Devices
+                    <span class="device-count" id="deviceCount">0</span>
+                </h3>
+                <div class="network-device-list" id="networkDeviceList">
+                    <div class="empty-state">
+                        <p>Click "Scan Network" to discover real devices</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LAN Setup Guide -->
+            <div class="card glass guide-card">
+                <h3 class="guide-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                    How to Set Up LAN File Sharing
+                </h3>
+                <div class="guide-steps">
+                    <div class="guide-step">
+                        <span class="step-num">1</span>
+                        <div class="step-content">
+                            <strong>Connect to the same Wi-Fi / Network</strong>
+                            <p>Both sender and receiver must be on the same local network (same Wi-Fi router or Ethernet switch).</p>
+                        </div>
+                    </div>
+                    <div class="guide-step">
+                        <span class="step-num">2</span>
+                        <div class="step-content">
+                            <strong>Run Black Packet on both devices</strong>
+                            <p>Run <code>npm start</code> on <strong>both machines</strong> connected to the same Wi-Fi. The second device opens a browser to <code>http://&lt;THIS-PC-IP&gt;:3000</code> — the LAN IP is shown above under "This Device".</p>
+                        </div>
+                    </div>
+                    <div class="guide-step">
+                        <span class="step-num">3</span>
+                        <div class="step-content">
+                            <strong>Devices appear automatically</strong>
+                            <p>Within 5 seconds, both devices will discover each other via UDP broadcast. Click a peer to open their upload page.</p>
+                        </div>
+                    </div>
+                    <div class="guide-step">
+                        <span class="step-num">4</span>
+                        <div class="step-content">
+                            <strong>Upload &amp; share the access code</strong>
+                            <p>Upload a file on one device, then enter the 6-digit code on the other device to download — no internet needed!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Internet Sharing Guide -->
+            <div class="card glass guide-card">
+                <h3 class="guide-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-3)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                    How to Share Files Over the Internet
+                </h3>
+                <p class="guide-intro">Want to send files to someone in another city? Here's how:</p>
+                <div class="guide-steps">
+                    <div class="guide-step">
+                        <span class="step-num">1</span>
+                        <div class="step-content">
+                            <strong>Deploy Black Packet to the cloud</strong>
+                            <p>Deploy this app on <strong>Render</strong>, <strong>Railway</strong>, or any cloud host. You'll get a public URL like <code>https://black-packet.onrender.com</code>.</p>
+                        </div>
+                    </div>
+                    <div class="guide-step">
+                        <span class="step-num">2</span>
+                        <div class="step-content">
+                            <strong>Open the URL on your device</strong>
+                            <p>Visit the deployed URL in your browser and upload your file. You'll receive a <strong>6-digit access code</strong>, <strong>QR code</strong>, or a <strong>secret share card</strong>.</p>
+                        </div>
+                    </div>
+                    <div class="guide-step">
+                        <span class="step-num">3</span>
+                        <div class="step-content">
+                            <strong>Share the code with the receiver</strong>
+                            <p>Send the 6-digit code via WhatsApp, text, or email — or send the secret share card image for extra security!</p>
+                        </div>
+                    </div>
+                    <div class="guide-step">
+                        <span class="step-num">4</span>
+                        <div class="step-content">
+                            <strong>Receiver downloads from the same URL</strong>
+                            <p>The receiver opens the same deployed URL, goes to <strong>Download</strong> tab, enters the code → file downloads instantly. Works across cities, countries!</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="guide-note">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--warning)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    <span><strong>Note:</strong> LAN discovery (UDP broadcast) only works on local networks. Over the internet, use the access code, QR, or share card to transfer files.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══ ANALYTICS PANEL ═══ -->
+        <section class="panel" id="panelAnalytics">
+            <div class="card glass">
+                <h2 class="card-title">System Analytics</h2>
+                <p class="card-subtitle">Real-time transfer metrics &amp; system performance</p>
+
+                <!-- Live Stats Grid -->
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="statUploads">0</div>
+                        <div class="stat-label">Uploads</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statDownloads">0</div>
+                        <div class="stat-label">Downloads</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statBytes">0 B</div>
+                        <div class="stat-label">Data Transferred</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statSpeed">0 B/s</div>
+                        <div class="stat-label">Avg Speed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statChunks">0</div>
+                        <div class="stat-label">Chunks Processed</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statEncrypted">0</div>
+                        <div class="stat-label">Encrypted</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statScanned">0</div>
+                        <div class="stat-label">Files Scanned</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="statBlocked">0</div>
+                        <div class="stat-label">Threats Blocked</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Health -->
+            <div class="card glass" style="margin-top:16px">
+                <h3 class="guide-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-1)" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                    System Health
+                </h3>
+                <div class="health-grid" id="healthGrid">
+                    <div class="health-item">
+                        <span class="health-label">Uptime</span>
+                        <span class="health-value mono" id="healthUptime">—</span>
+                    </div>
+                    <div class="health-item">
+                        <span class="health-label">Memory</span>
+                        <span class="health-value mono" id="healthMemory">—</span>
+                    </div>
+                    <div class="health-item">
+                        <span class="health-label">Platform</span>
+                        <span class="health-value mono" id="healthPlatform">—</span>
+                    </div>
+                    <div class="health-item">
+                        <span class="health-label">Node.js</span>
+                        <span class="health-value mono" id="healthNode">—</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benchmark -->
+            <div class="card glass" style="margin-top:16px">
+                <h3 class="guide-title">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                    Performance Benchmark
+                </h3>
+                <button class="btn-primary" id="runBenchmarkBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    <span>Run Benchmark</span>
+                </button>
+                <div class="benchmark-results hidden" id="benchmarkResults">
+                    <div class="benchmark-grid" id="benchmarkGrid"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ═══ Footer ═══ -->
+    <footer class="footer">
+        <p>Black Packet &copy; 2026 — Advanced Secure File Transfer System</p>
+        <p class="footer-credits">Made with ❤️ by <span class="footer-team">KSMH</span></p>
+    </footer>
+
+    <!-- ═══ Toast Notification Container ═══ -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Socket.IO client (served by the backend) -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
